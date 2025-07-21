@@ -9,14 +9,14 @@ load_dotenv()
 GIT_USER_NAME = os.getenv("GIT_USER_NAME")
 GIT_USER_EMAIL = os.getenv("GIT_USER_EMAIL")
 
-# Run shell command
+# Run a shell command
 def run_command(command, env=None):
     result = subprocess.run(command, shell=True, capture_output=True, text=True, env=env)
-    if result.stderr and "nothing to commit" not in result.stderr:
-        print("Error:", result.stderr.strip())
+    if result.returncode != 0:
+        print("❌ Error:", result.stderr.strip())
     return result.stdout.strip()
 
-# Build Git commit environment with user and datetime
+# Build environment with git identity and commit datetime
 def build_git_env(commit_datetime):
     env = os.environ.copy()
     env["GIT_AUTHOR_DATE"] = commit_datetime
@@ -27,23 +27,21 @@ def build_git_env(commit_datetime):
     env["GIT_COMMITTER_EMAIL"] = GIT_USER_EMAIL
     return env
 
-# Make one backdated commit
+# Create a single commit at a specific datetime
 def make_commit(commit_datetime):
     with open("activity.txt", "a") as f:
         f.write(f"Commit on {commit_datetime}\n")
 
     run_command("git add activity.txt")
-
     env = build_git_env(commit_datetime)
     run_command(f'git commit -m "Backdated commit on {commit_datetime}"', env=env)
 
-# Generate commits over date range
+# Generate multiple commits across a date range
 def generate_commits(start_date, end_date, default_commits=10, special_commits=25, special_days=None):
     if special_days is None:
         special_days = set()
 
     current = start_date
-
     while current <= end_date:
         month_day = current.strftime("%m-%d")
         is_special = month_day in special_days
@@ -59,14 +57,14 @@ def generate_commits(start_date, end_date, default_commits=10, special_commits=2
         print(f"{'⭐️' if is_special else '✅'} {num_commits} commits on {current.date()}")
         current += timedelta(days=1)
 
-# Main execution
+# ---------------- MAIN ----------------
 if __name__ == "__main__":
-    start_date = datetime(2016, 1, 5)
+    # Change to your desired start date
+    start_date = datetime(2025, 6, 5)
     end_date = datetime.today()
 
     special_dates = {
-        "01-01",  # New Year
-        "07-21",  # Your birthday
+        "06-01",  # Just a sample special day
         "12-25",  # Christmas
     }
 
@@ -78,4 +76,5 @@ if __name__ == "__main__":
         special_days=special_dates
     )
 
-    run_command("git push origin main")  # change 'main' if needed
+    # Final push to GitHub
+    run_command("git push origin main")  # Change 'main' if your branch is different
