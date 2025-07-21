@@ -60,11 +60,11 @@ def generate_commits(start_date, end_date, default_commits=10, special_commits=2
 # ---------------- MAIN ----------------
 if __name__ == "__main__":
     # Change to your desired start date
-    start_date = datetime(2025, 6, 5)
+    start_date = datetime(2025, 4, 22)
     end_date = datetime.today()
 
     special_dates = {
-        "06-01",  # Just a sample special day
+        "06-05",  # Just a sample special day
         "12-25",  # Christmas
     }
 
